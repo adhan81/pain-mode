@@ -107,5 +107,6 @@ export const desiredEmotions: Emotion[] = [
   { name: 'Organized', color: 'blue' },
   { name: 'Productive', color: 'green' },
   { name: 'Determined', color: 'red' },
-  { name: 'Resilient', color: 'amber' }
+  { name: 'Resilient', color: 'amber' },
+  { name: 'Proud', color: 'amber' }
 ]; 
