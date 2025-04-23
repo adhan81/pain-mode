@@ -3,12 +3,14 @@ import { DetailedIntervention } from './DetailedIntervention';
 import { Emotion } from '../../../data/emotions';
 import { desiredEmotions } from '../../../data/emotions';
 import { getAIResponse } from '../../../services/openai';
+import Interventions from './Interventions';
 
 interface NextStepProps {
   fromEmotion: Emotion;
   toEmotion: Emotion;
   onBack?: () => void;
   onComplete: () => void;
+  showInterventions: boolean;
 }
 
 export type InterventionType = 'physical' | 'mental' | 'visual' | 'meditation' | 'breathing';
@@ -274,35 +276,18 @@ interface Message {
   content: string;
 }
 
-const NextStep: React.FC<NextStepProps> = ({ fromEmotion, toEmotion, onBack, onComplete }) => {
-  const [conversationStep, setConversationStep] = useState<ConversationStep>('initial');
+const NextStep: React.FC<NextStepProps> = ({ fromEmotion, toEmotion, onBack, onComplete, showInterventions: initialShowInterventions }) => {
   const [conversation, setConversation] = useState<Message[]>([]);
   const [userInput, setUserInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [showIntervention, setShowIntervention] = useState(false);
+  const [showInterventions, setShowInterventions] = useState(initialShowInterventions);
   const [showInterventionButton, setShowInterventionButton] = useState(false);
-  const [showInterventionSelection, setShowInterventionSelection] = useState(false);
-  const [currentInterventionIndex, setCurrentInterventionIndex] = useState(0);
-  const [currentIntervention, setCurrentIntervention] = useState<{
-    title: string;
-    type: 'physical' | 'mental' | 'visual' | 'meditation' | 'breathing';
-    duration: number;
-    steps: string[];
-  }>({
-    title: 'Guided Breathing Exercise',
-    type: 'breathing',
-    duration: 1,
-    steps: [
-      'Find a comfortable position and close your eyes',
-      'Take a deep breath in through your nose for 4 counts',
-      'Hold your breath for 4 counts',
-      'Slowly exhale through your mouth for 6 counts',
-      'Repeat this cycle for the duration of the exercise'
-    ]
-  });
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [selectedDesiredEmotion, setSelectedDesiredEmotion] = useState<Emotion | null>(null);
-  const [inputValue, setInputValue] = useState('');
+
+  // Update showInterventions when the prop changes
+  useEffect(() => {
+    setShowInterventions(initialShowInterventions);
+  }, [initialShowInterventions]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -312,31 +297,23 @@ const NextStep: React.FC<NextStepProps> = ({ fromEmotion, toEmotion, onBack, onC
     scrollToBottom();
   }, [conversation]);
 
-  // Initialize conversation only once when component mounts
+  // Initialize conversation
   useEffect(() => {
-    // Create initial user message
     const initialMessage: Message = {
       role: 'user',
-      content: `I'm feeling ${fromEmotion.name.toLowerCase()} and I want to feel more ${toEmotion.name.toLowerCase()}. Can you help me?`
+      content: `I'm feeling ${fromEmotion.name.toLowerCase()}.`
     };
     
-    // Set initial conversation state
     setConversation([initialMessage]);
     
-    // Get AI response for initial message
     const getInitialResponse = async () => {
       setIsLoading(true);
       try {
-        // Only send the initial message to the API
         const response = await getAIResponse([initialMessage], fromEmotion, toEmotion);
-        
-        // Add the AI response to the conversation
         const assistantMessage: Message = {
           role: 'assistant',
           content: response.message
         };
-        
-        // Update conversation with both messages
         setConversation([initialMessage, assistantMessage]);
       } catch (error) {
         console.error('Error getting initial AI response:', error);
@@ -345,72 +322,47 @@ const NextStep: React.FC<NextStepProps> = ({ fromEmotion, toEmotion, onBack, onC
       }
     };
     
-    // Call the function to get the initial response
     getInitialResponse();
   }, []);
 
-  const handleAIResponse = async (userMessage: Message) => {
-    // Prevent duplicate messages
-    if (isLoading) return;
-    
-    // Check if this is a duplicate of the last user message
-    const lastMessage = conversation[conversation.length - 1];
-    if (lastMessage && lastMessage.role === 'user' && lastMessage.content === userMessage.content) {
-      console.log('Duplicate message detected, skipping AI response');
-      return;
-    }
-    
-    setIsLoading(true);
-    try {
-      // Get AI response for the new message
-      const response = await getAIResponse([...conversation, userMessage], fromEmotion, toEmotion);
-      
-      // Add the AI response to the conversation
-      const assistantMessage: Message = {
-        role: 'assistant',
-        content: response.message
-      };
-      
-      // Update conversation with the new messages
-      setConversation(prev => [...prev, assistantMessage]);
-      
-      // After the second message (user's response), show the intervention button
-      if (conversation.length >= 2) {
-        // Add a small delay before showing the intervention button
-        setTimeout(() => {
-          setShowInterventionButton(true);
-          
-          // Select an appropriate intervention based on the emotions
-          const suitableIntervention = findSuitableIntervention(fromEmotion, toEmotion);
-          if (suitableIntervention) {
-            setCurrentIntervention({
-              title: suitableIntervention.title,
-              type: suitableIntervention.type,
-              duration: suitableIntervention.duration || 1,
-              steps: suitableIntervention.steps || []
-            });
-          }
-        }, 1000);
-      }
-    } catch (error) {
-      console.error('Error getting AI response:', error);
-      setShowIntervention(true);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const handleSendMessage = () => {
     if (!userInput.trim() || isLoading) return;
-    
+
     const userMessage: Message = {
       role: 'user',
       content: userInput.trim()
     };
-    
+
     setConversation(prev => [...prev, userMessage]);
     setUserInput('');
-    handleAIResponse(userMessage);
+    setIsLoading(true);
+
+    // Get AI response
+    const getAIResponseAsync = async () => {
+      try {
+        const response = await getAIResponse([...conversation, userMessage], fromEmotion, toEmotion);
+        const assistantMessage: Message = {
+          role: 'assistant',
+          content: response.message
+        };
+        setConversation(prev => [...prev, assistantMessage]);
+        
+        // Show intervention button after the first AI response to user input
+        if (conversation.length >= 2) {
+          setShowInterventionButton(true);
+        }
+      } catch (error) {
+        console.error('Error getting AI response:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    getAIResponseAsync();
+  };
+
+  const handleInterventionClick = () => {
+    onComplete();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -420,144 +372,66 @@ const NextStep: React.FC<NextStepProps> = ({ fromEmotion, toEmotion, onBack, onC
     }
   };
 
-  const handleTryIntervention = () => {
-    setShowInterventionSelection(true);
+  const handleBack = () => {
+    setShowInterventions(false);
   };
 
-  // Function to shuffle to a different intervention
-  const shuffleIntervention = () => {
-    // Get a random index that's different from the current one
-    let newIndex;
-    do {
-      newIndex = Math.floor(Math.random() * sampleInterventions.length);
-    } while (newIndex === currentInterventionIndex && sampleInterventions.length > 1);
-    
-    setCurrentInterventionIndex(newIndex);
-  };
-  
-  // Function to select the current intervention
-  const handleSelectCurrentIntervention = () => {
-    const intervention = sampleInterventions[currentInterventionIndex];
-    setCurrentIntervention({
-      title: intervention.title,
-      type: intervention.type,
-      duration: intervention.duration || 1,
-      steps: intervention.steps || []
-    });
-    setShowInterventionSelection(false);
-    setShowIntervention(true);
-  };
-
-  const handleInterventionComplete = () => {
-    setShowIntervention(false);
-    onComplete?.();
-  };
-
-  // Function to find a suitable intervention based on emotions
-  const findSuitableIntervention = (from: Emotion, to: Emotion): Intervention | null => {
-    // Find interventions that match the emotion transition
-    const matchingInterventions = sampleInterventions.filter(intervention => {
-      const fromMatch = intervention.suitableFor.from.includes(from.name.toLowerCase());
-      const toMatch = intervention.suitableFor.to.includes(to.name.toLowerCase());
-      return fromMatch && toMatch;
-    });
-    
-    // If we have matches, return the first one
-    if (matchingInterventions.length > 0) {
-      return matchingInterventions[0];
-    }
-    
-    // If no exact match, find interventions that match either the from or to emotion
-    const partialMatches = sampleInterventions.filter(intervention => {
-      const fromMatch = intervention.suitableFor.from.includes(from.name.toLowerCase());
-      const toMatch = intervention.suitableFor.to.includes(to.name.toLowerCase());
-      return fromMatch || toMatch;
-    });
-    
-    if (partialMatches.length > 0) {
-      return partialMatches[0];
-    }
-    
-    // Default to box breathing if no matches found
-    return sampleInterventions[0];
-  };
-
-  const handleInterventionClick = () => {
-    setShowIntervention(true);
-  };
-
-  const handleDesiredEmotionClick = (emotion: Emotion) => {
-    setSelectedDesiredEmotion(emotion);
-  };
+  if (showInterventions) {
+    return (
+      <Interventions
+        fromEmotion={fromEmotion}
+        toEmotion={toEmotion}
+        onBack={handleBack}
+        onComplete={onComplete}
+      />
+    );
+  }
 
   return (
     <div className="flex flex-col h-full">
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {/* Desired Emotion Selection */}
-        {!selectedDesiredEmotion && (
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold text-gray-800">How would you like to feel?</h2>
-            <div className="flex flex-wrap gap-2">
-              {desiredEmotions.map((emotion) => (
-                <button
-                  key={emotion.name}
-                  onClick={() => handleDesiredEmotionClick(emotion)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${emotion.color}`}
-                >
-                  {emotion.name}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
         {/* Chat Interface */}
-        {selectedDesiredEmotion && (
-          <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <span className="text-sm font-medium text-gray-600">Moving toward:</span>
-              <span className={`px-3 py-1 rounded-full text-sm font-medium ${selectedDesiredEmotion.color}`}>
-                {selectedDesiredEmotion.name}
-              </span>
-            </div>
-            <div className="space-y-4">
-              {conversation.map((message, index) => (
-                <div
-                  key={index}
-                  className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div
-                    className={`max-w-[80%] rounded-lg p-3 ${
-                      message.role === 'user'
-                        ? 'bg-purple-100 text-purple-800'
-                        : 'bg-gray-100 text-gray-800'
-                    }`}
-                  >
-                    {message.content}
-                  </div>
-                </div>
-              ))}
-              {isLoading && (
-                <div className="flex justify-start">
-                  <div className="bg-gray-100 text-gray-800 rounded-lg p-3">
-                    <div className="flex space-x-2">
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }} />
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
+        <div className="space-y-4">
+          <div className="flex items-center space-x-2">
+            <span className="text-sm font-medium text-gray-600">Moving toward:</span>
+            <span className={`px-3 py-1 rounded-full text-sm font-medium ${toEmotion.color}`}>
+              {toEmotion.name}
+            </span>
           </div>
-        )}
+          <div className="space-y-4">
+            {conversation.map((message, index) => (
+              <div
+                key={index}
+                className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                <div
+                  className={`max-w-[80%] rounded-lg p-3 ${
+                    message.role === 'user'
+                      ? 'bg-primary text-white'
+                      : 'bg-gray-100 text-gray-900'
+                  }`}
+                >
+                  {message.content}
+                </div>
+              </div>
+            ))}
+            {isLoading && (
+              <div className="flex justify-start">
+                <div className="bg-gray-100 text-gray-900 rounded-lg p-3">
+                  Thinking...
+                </div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+        </div>
 
-        {/* Intervention Selection */}
+        {/* Intervention Button */}
         {showInterventionButton && (
           <div className="mt-4">
             <button
               onClick={handleInterventionClick}
-              className="w-full bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors"
+              className="w-full bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary-dark transition-colors"
             >
               Start Intervention
             </button>
@@ -566,27 +440,26 @@ const NextStep: React.FC<NextStepProps> = ({ fromEmotion, toEmotion, onBack, onC
       </div>
 
       {/* Input Area */}
-      {selectedDesiredEmotion && !showInterventionButton && (
-        <div className="border-t border-gray-200 p-4">
-          <div className="flex space-x-2">
-            <input
-              type="text"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-              placeholder="Type your message..."
-              className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
-            />
-            <button
-              onClick={handleSendMessage}
-              disabled={!inputValue.trim()}
-              className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50"
-            >
-              Send
-            </button>
-          </div>
+      <div className="border-t border-gray-200 p-4">
+        <div className="flex space-x-2">
+          <input
+            type="text"
+            value={userInput}
+            onChange={(e) => setUserInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Type your message..."
+            className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+            disabled={isLoading}
+          />
+          <button
+            onClick={handleSendMessage}
+            disabled={isLoading || !userInput.trim()}
+            className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark disabled:opacity-50"
+          >
+            Send
+          </button>
         </div>
-      )}
+      </div>
     </div>
   );
 };

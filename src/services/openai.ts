@@ -52,14 +52,15 @@ export async function getAIResponse(
       Your role is to:
       1. Acknowledge what they've shared about why they're feeling this way
       2. Provide a brief insight (1-2 sentences) about their emotional state
-      3. Keep your response under 75 words
-      4. Be warm and empathetic
-      5. Don't provide advice or solutions yet - just offer insight`;
+      3. Suggest that a guided intervention might help them feel more ${toEmotion.name.toLowerCase()}
+      4. Keep your response under 100 words
+      5. Be warm and encouraging
+      6. End with the question: "Would you like to take one small step together towards feeling more ${toEmotion.name.toLowerCase()}?"`;
     } else if (step === 'insight') {
       systemMessage = `You are a compassionate emotional support assistant. The user is feeling ${fromEmotion.name.toLowerCase()} and wants to feel more ${toEmotion.name.toLowerCase()}. 
       Your role is to:
-      1. Acknowledge their response to your insight
-      2. Suggest that a guided intervention might help them feel more ${toEmotion.name.toLowerCase()}
+      1. Acknowledge their response
+      2. Encourage them to try a guided intervention
       3. Keep your response under 50 words
       4. Be warm and encouraging
       5. Guide them toward trying an intervention`;
@@ -129,37 +130,37 @@ function generateSimulatedResponse(fromEmotion: Emotion, toEmotion: Emotion, use
   
   const responses = {
     anxious: [
-      "It sounds like you're dealing with a lot of uncertainty right now. Anxiety often comes from our minds trying to protect us from potential threats, even when those threats aren't immediate. What specific situation is triggering this anxiety?",
-      "When we feel anxious, our bodies go into fight-or-flight mode, which can make everything feel more intense. Have you noticed any physical sensations along with your anxiety?",
-      "Sometimes anxiety can make us feel like we need to solve everything at once. What's one small thing you could focus on right now that might help you feel more in control?"
+      "It sounds like you're dealing with a lot of uncertainty right now. Anxiety often comes from our minds trying to protect us from potential threats, even when those threats aren't immediate. Would you like to take one small step together towards feeling more calm?",
+      "When we feel anxious, our bodies go into fight-or-flight mode, which can make everything feel more intense. Would you like to take one small step together towards feeling more grounded?",
+      "Sometimes anxiety can make us feel like we need to solve everything at once. Would you like to take one small step together towards feeling more in control?"
     ],
     angry: [
-      "Anger is a powerful emotion that often masks deeper feelings. What triggered this anger? Sometimes when we explore what's beneath the surface, we find that we're actually feeling hurt, scared, or frustrated in a different way.",
-      "Your anger is valid - it's telling you that something matters to you. What boundary or value do you feel has been crossed? Understanding this can help you process your feelings constructively.",
-      "When we're angry, it can be hard to see other perspectives. What would help you feel heard in this situation without escalating the conflict?"
+      "Anger is a powerful emotion that often masks deeper feelings. Would you like to take one small step together towards feeling more peaceful?",
+      "Your anger is valid - it's telling you that something matters to you. Would you like to take one small step together towards feeling more centered?",
+      "When we're angry, it can be hard to see other perspectives. Would you like to take one small step together towards feeling more balanced?"
     ],
     sad: [
-      "Sadness is a natural part of being human. What's making you feel this way? Sometimes when we give ourselves permission to feel sad and talk about why, we can find glimmers of hope in unexpected places.",
-      "It's okay to feel sad. What's weighing on your heart right now? Sometimes simply acknowledging our feelings and sharing them can bring a sense of peace.",
-      "When we're sad, it can feel like that's all there is. What small things in your life right now can you appreciate, even alongside this sadness?"
+      "Sadness is a natural part of being human. Would you like to take one small step together towards feeling more hopeful?",
+      "It's okay to feel sad. Would you like to take one small step together towards feeling more at peace?",
+      "When we're sad, it can feel like that's all there is. Would you like to take one small step together towards feeling more uplifted?"
     ],
     overwhelmed: [
-      "Feeling overwhelmed can make everything seem too big to handle. What's the most pressing thing on your mind right now? Breaking things down into smaller steps can help us feel more focused and capable.",
-      "When we're overwhelmed, it's like too many tabs are open in our minds. What's the main source of this overwhelm? Sometimes identifying the root cause can help us find calm in knowing what to address first.",
-      "Overwhelm can make us feel disconnected from ourselves. What's one small thing you can do right now to feel more present? Even taking a deep breath or feeling your feet on the ground can help."
+      "Feeling overwhelmed can make everything seem too big to handle. Would you like to take one small step together towards feeling more focused?",
+      "When we're overwhelmed, it's like too many tabs are open in our minds. Would you like to take one small step together towards feeling more clear?",
+      "Overwhelm can make us feel disconnected from ourselves. Would you like to take one small step together towards feeling more present?"
     ],
     stuck: [
-      "Feeling stuck often comes from a lack of movement or clarity. What's making you feel this way? Sometimes even small actions can create momentum and help us feel more energized.",
-      "Being stuck can feel permanent, but it's often temporary. What would feeling unstuck look like for you? Imagining this can help us find hope and direction.",
-      "Sometimes being stuck is a sign we need a fresh perspective. What's one thing you haven't tried yet? Exploring new approaches can spark inspiration."
+      "Feeling stuck often comes from a lack of movement or clarity. Would you like to take one small step together towards feeling more energized?",
+      "Being stuck can feel permanent, but it's often temporary. Would you like to take one small step together towards feeling more inspired?",
+      "Sometimes being stuck is a sign we need a fresh perspective. Would you like to take one small step together towards feeling more motivated?"
     ]
   };
   
   // Get a random response based on the emotion
   const emotionResponses = responses[fromEmotion.name.toLowerCase() as keyof typeof responses] || [
-    "Thank you for sharing that. It sounds like you're going through a challenging time. What's one small step you could take toward feeling more " + toEmotion.name.toLowerCase() + "?",
-    "I hear you. Emotions can be complex and sometimes confusing. What would help you feel more " + toEmotion.name.toLowerCase() + " right now?",
-    "It sounds like you're dealing with a lot. What's one thing that usually helps you when you're feeling this way?"
+    "Thank you for sharing that. It sounds like you're going through a challenging time. Would you like to take one small step together towards feeling more " + toEmotion.name.toLowerCase() + "?",
+    "I hear you. Emotions can be complex and sometimes confusing. Would you like to take one small step together towards feeling more " + toEmotion.name.toLowerCase() + "?",
+    "It sounds like you're dealing with a lot. Would you like to take one small step together towards feeling more " + toEmotion.name.toLowerCase() + "?"
   ];
   
   return {
