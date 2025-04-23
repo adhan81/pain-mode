@@ -1,0 +1,124 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --primary: 217 91% 60%;
+    --primary-dark: 217 91% 50%;
+  }
+
+  body {
+    @apply m-0 min-h-screen w-full bg-gray-50 text-gray-900 antialiased;
+  }
+
+  button {
+    @apply cursor-pointer transition-all duration-200 ease-in-out;
+  }
+
+  a {
+    @apply text-primary hover:text-primary-dark transition-colors duration-200;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply px-4 py-2 rounded-lg font-medium transition-all duration-200 ease-in-out;
+  }
+
+  .btn:hover {
+    @apply transform scale-105;
+  }
+
+  .btn-primary {
+    @apply bg-primary text-white;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary text-white;
+  }
+
+  .emotion-pill-container {
+    @apply flex flex-wrap gap-2 justify-center p-4;
+  }
+
+  .emotion-pill {
+    @apply px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ease-in-out transform hover:scale-105 active:scale-95;
+  }
+
+  .page-transition-enter {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .page-transition-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 300ms, transform 300ms;
+  }
+
+  .page-transition-exit {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .page-transition-exit-active {
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: opacity 300ms, transform 300ms;
+  }
+
+  .intervention-card {
+    @apply bg-white rounded-lg p-6 shadow-sm transition-all duration-300 hover:shadow-md transform hover:-translate-y-1;
+  }
+
+  .success-feedback {
+    @apply fixed inset-0 flex items-center justify-center bg-black/50 transition-opacity duration-300;
+  }
+
+  .success-content {
+    @apply bg-white rounded-lg p-8 max-w-md w-full mx-4 transform transition-all duration-300 scale-95 opacity-0;
+  }
+
+  .success-content.show {
+    @apply scale-100 opacity-100;
+  }
+
+  .progress-indicator {
+    @apply flex justify-center space-x-2 mb-8 transition-all duration-300;
+  }
+
+  .progress-dot {
+    @apply w-3 h-3 rounded-full bg-gray-200 transition-all duration-300;
+  }
+
+  .progress-dot.active {
+    @apply bg-primary scale-125;
+  }
+
+  .button-primary {
+    @apply bg-primary text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 ease-in-out hover:bg-primary-dark;
+  }
+
+  .button-secondary {
+    @apply bg-gray-200 text-gray-800 px-4 py-2 rounded-lg font-medium transition-all duration-200 ease-in-out hover:bg-gray-300;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .text-primary {
+    color: #4F46E5;
+  }
+  
+  .text-primary-dark {
+    color: #4338CA;
+  }
+}
