@@ -251,7 +251,7 @@ const allInterventions: Intervention[] = [
     ],
     suitableFor: {
       from: ['sad', 'empty', 'disconnected'],
-      to: ['grateful', 'content', 'connected']
+      to: ['grateful', 'connected', 'peaceful']
     }
   },
   {
@@ -336,6 +336,66 @@ const allInterventions: Intervention[] = [
     suitableFor: {
       from: ['anxious', 'angry', 'sad', 'frustrated', 'overwhelmed', 'stressed', 'guilty', 'ashamed', 'scared', 'disconnected', 'numb', 'empty', 'stuck', 'restless', 'scattered', 'tense', 'irritated', 'self-critical', 'embarrassed', 'hopeless', 'nervous', 'tired'],
       to: ['calm', 'peaceful', 'hopeful', 'grateful', 'present', 'connected', 'energized', 'focused', 'confident', 'empowered', 'strong', 'capable', 'content', 'safe', 'playful', 'curious', 'accepting', 'compassionate', 'alive', 'disciplined', 'organized', 'productive', 'determined', 'resilient', 'proud']
+    }
+  },
+  {
+    id: 'memory-palace',
+    type: 'mental',
+    title: 'Memory Palace of Joy',
+    description: 'Create a detailed mental space filled with happy memories and positive emotions.',
+    icon: 'book',
+    isDetailed: true,
+    duration: 3,
+    steps: [
+      'Close your eyes and imagine a beautiful space',
+      'Fill it with objects that bring you joy',
+      'Add details like colors, textures, and scents',
+      'Place happy memories in different rooms',
+      'Know you can visit this place anytime'
+    ],
+    suitableFor: {
+      from: ['sad', 'numb', 'disconnected', 'empty', 'hopeless'],
+      to: ['joyful', 'connected', 'alive', 'peaceful', 'hopeful']
+    }
+  },
+  {
+    id: 'gratitude-letter',
+    type: 'mental',
+    title: 'Gratitude Letter',
+    description: 'Write a letter expressing gratitude to someone who has positively impacted your life.',
+    icon: 'book',
+    isDetailed: true,
+    duration: 4,
+    steps: [
+      'Choose someone you feel grateful for',
+      'Write about specific ways they helped you',
+      'Describe how their actions affected you',
+      'Express your appreciation in detail',
+      'Read the letter to yourself'
+    ],
+    suitableFor: {
+      from: ['sad', 'empty', 'disconnected', 'numb', 'self-critical'],
+      to: ['grateful', 'connected', 'compassionate', 'peaceful', 'hopeful']
+    }
+  },
+  {
+    id: 'linguini-visualization',
+    type: 'mental',
+    title: 'Transformative Linguini',
+    description: 'A playful visualization exercise to practice acceptance of change.',
+    icon: 'heart',
+    isDetailed: true,
+    duration: 3,
+    steps: [
+      'Imagine a long piece of linguini',
+      'Notice how the sauce changes every 10 seconds',
+      'Observe your reactions to each change',
+      'Practice accepting each new flavor',
+      'Notice how change can be delicious'
+    ],
+    suitableFor: {
+      from: ['anxious', 'stressed', 'overwhelmed', 'stuck', 'nervous'],
+      to: ['playful', 'accepting', 'present', 'curious', 'peaceful']
     }
   }
 ];

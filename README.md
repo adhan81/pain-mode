@@ -1,54 +1,100 @@
-# React + TypeScript + Vite
+# PAIN Mode - Emotional Regulation App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A web application designed to help users navigate and transform their emotional states through guided interventions and practices.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Emotion Selection**: Choose current and desired emotional states
+- **Guided Interventions**: Access tailored practices for emotional regulation
+- **Memory Palace**: Create mental spaces for positive emotions
+- **Gratitude Practice**: Write letters of appreciation
+- **Transformative Visualizations**: Interactive exercises for emotional change
 
-## Expanding the ESLint configuration
+## Key Components
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Emotion Management
+- Current emotion selection
+- Desired emotion targeting
+- Emotion transition tracking
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+### Interventions
+- Mental practices (e.g., Memory Palace, Gratitude Letter)
+- Physical exercises (e.g., Tension Release, Power Pose)
+- Visualization techniques (e.g., Transformative Linguini)
+
+### User Experience
+- Step-by-step guidance
+- Duration-based practices
+- Progress tracking
+
+## Technical Stack
+
+- React
+- TypeScript
+- Tailwind CSS
+- Vite
+
+## Getting Started
+
+1. Clone the repository
+```bash
+git clone [repository-url]
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+2. Install dependencies
+```bash
+cd pain-mode
+npm install
 ```
+
+3. Start development server
+```bash
+npm run dev
+```
+
+## Project Structure
+
+```
+pain-mode/
+├── src/
+│   ├── components/
+│   │   └── PAIN/
+│   │       ├── Next/
+│   │       │   ├── Interventions.tsx
+│   │       │   └── DetailedIntervention.tsx
+│   │       └── ...
+│   ├── data/
+│   │   └── emotions.ts
+│   └── ...
+├── public/
+└── ...
+```
+
+## Key Concepts
+
+### Emotion Pairs
+The app matches current emotions with desired states to suggest appropriate interventions.
+
+### Intervention Types
+- Mental: Visualization and cognitive practices
+- Physical: Body-based exercises
+- Meditation: Mindfulness practices
+
+### Duration-Based Practices
+Interventions are categorized by duration (1-4 minutes) for better user planning.
+
+## Future Development
+
+This project serves as a foundation for emotional regulation tools. Future iterations may include:
+- Additional intervention types
+- User progress tracking
+- Community features
+- Mobile app version
+
+## Contributing
+
+Feel free to submit issues and enhancement requests.
+
+## License
+
+[Your chosen license]
